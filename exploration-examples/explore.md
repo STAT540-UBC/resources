@@ -3,27 +3,27 @@ Exploratory data analysis example for STAT 540
 Paul Pavlidis (<paul@msl.ubc.ca>) & Keegan Korthauer
 (<keegan@stat.ubc.ca>)
 
--   [1. Preliminaries](#1-preliminaries)
--   [2. Load data](#2-load-data)
--   [3. Organizing the data](#3-organizing-the-data)
--   [4. Initial inspection](#4-initial-inspection)
-    -   [Simple plots of one row/col](#simple-plots-of-one-rowcol)
--   [5. Density plots](#5-density-plots)
-    -   [Box plots](#box-plots)
-    -   [Smoothed density plots](#smoothed-density-plots)
-    -   [Histograms](#histograms)
-    -   [Histograms vs density plots for bounded
-        data](#histograms-vs-density-plots-for-bounded-data)
-    -   [Violin plots](#violin-plots)
--   [6. Expression of Chd8](#6-expression-of-chd8)
-    -   [base](#base)
-    -   [ggplot version](#ggplot-version)
--   [7. Scatter plots](#7-scatter-plots)
-    -   [Log transformation](#log-transformation)
--   [8. Heatmaps](#8-heatmaps)
--   [9. Checking metadata with sex-specific
-    genes](#9-checking-metadata-with-sex-specific-genes)
--   [10. Sample-sample correlations](#10-sample-sample-correlations)
+- [1. Preliminaries](#1-preliminaries)
+- [2. Load data](#2-load-data)
+- [3. Organizing the data](#3-organizing-the-data)
+- [4. Initial inspection](#4-initial-inspection)
+  - [Simple plots of one row/col](#simple-plots-of-one-rowcol)
+- [5. Density plots](#5-density-plots)
+  - [Box plots](#box-plots)
+  - [Smoothed density plots](#smoothed-density-plots)
+  - [Histograms](#histograms)
+  - [Histograms vs density plots for bounded
+    data](#histograms-vs-density-plots-for-bounded-data)
+  - [Violin plots](#violin-plots)
+- [6. Expression of Chd8](#6-expression-of-chd8)
+  - [base](#base)
+  - [ggplot version](#ggplot-version)
+- [7. Scatter plots](#7-scatter-plots)
+  - [Log transformation](#log-transformation)
+- [8. Heatmaps](#8-heatmaps)
+- [9. Checking metadata with sex-specific
+  genes](#9-checking-metadata-with-sex-specific-genes)
+- [10. Sample-sample correlations](#10-sample-sample-correlations)
 
 This material is a companion to the lecture on Exploratory Data Analysis
 & Experimental Design for [STAT 540](https://stat540-ubc.github.io/). It
@@ -41,6 +41,7 @@ aren’t already installed):
 
 ``` r
 knitr::opts_chunk$set(echo = TRUE)
+set.seed(4559)
 library(tidyverse)
 library(readxl)
 library(gridExtra)
@@ -333,8 +334,8 @@ tail(row.names(se))
 row.names(se)[sample(nrow(se), 10)]
 ```
 
-    ##  [1] "H1fx"   "Mmab"   "Dgat2"  "Zxdb"   "Tiparp" "Alkbh6" "Stk16"  "Adcy5" 
-    ##  [9] "Stip1"  "Ppp5c"
+    ##  [1] "Mpp6"    "Ccser1"  "Ufl1"    "Ap1b1"   "Tra2b"   "Rps6kb2" "Kcnh5"  
+    ##  [8] "Mapk10"  "Pkd2"    "Gypc"
 
 ``` r
 # What's the range of values?
@@ -355,15 +356,15 @@ any(is.na(assays(se)$logrpkm))
 
 This shows several things:
 
--   The data look log-transformed as expected; presumably base is 2.
--   There are 44 samples as expected
--   The number of genes (rows) doesn’t match any of the values mentioned
-    in the paper (at least not obviously); it’s not clear if this is all
-    the data or filtered somehow.
--   The rows are the gene symbols, and the rows seem to be in
-    lexicographic order
--   Names of samples are not very meaningful, but that’s okay.
--   No missing values (as usual, for RNA-seq data)
+- The data look log-transformed as expected; presumably base is 2.
+- There are 44 samples as expected
+- The number of genes (rows) doesn’t match any of the values mentioned
+  in the paper (at least not obviously); it’s not clear if this is all
+  the data or filtered somehow.
+- The rows are the gene symbols, and the rows seem to be in
+  lexicographic order
+- Names of samples are not very meaningful, but that’s okay.
+- No missing values (as usual, for RNA-seq data)
 
 For the sample information we can look at the distributions of some of
 the features:
@@ -424,12 +425,12 @@ m %>% select(-Number, -Sample) %>%
 
 This is informative about the study design and reveals a few issues.
 
--   Mapped reads varies with the batches.
--   Sex is not very well balanced with DPC. For example, all but one of
-    the adults is male.
--   There is a batch confound: Each stage (age) was run in separate
-    batches (17.5 was split in two batches). This is confirmed by
-    looking at the meta-data directly (RStudio `View(m)` and:
+- Mapped reads varies with the batches.
+- Sex is not very well balanced with DPC. For example, all but one of
+  the adults is male.
+- There is a batch confound: Each stage (age) was run in separate
+  batches (17.5 was split in two batches). This is confirmed by looking
+  at the meta-data directly (RStudio `View(m)` and:
 
 ``` r
 # Looking closer at the Batch-Stage confound
@@ -529,6 +530,12 @@ ggplot(data = d_long) +
 ```
 
     ## Warning: Duplicated aesthetics after name standardisation: group
+
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
 
 ![](explore_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
@@ -699,8 +706,9 @@ bin.
 ggplot(d, aes(Sample_ANAN001A, Sample_ANAN001G)) + geom_hex(bins=100)
 ```
 
-    ## Warning: Computation failed in `stat_binhex()`:
-    ## The `hexbin` package is required for `stat_binhex()`
+    ## Warning: Computation failed in `stat_binhex()`.
+    ## Caused by error in `compute_group()`:
+    ## ! The package "hexbin" is required for `stat_bin_hex()`.
 
 ![](explore_files/figure-gfm/hexbin-1.png)<!-- -->
 

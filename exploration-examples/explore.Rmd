@@ -17,6 +17,7 @@ To run the code, you'll need these packages (install them first if they aren't a
 
 ```{r setup, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+set.seed(4559)
 library(tidyverse)
 library(readxl)
 library(gridExtra)
