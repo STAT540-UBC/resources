@@ -8,6 +8,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+set.seed(348)
 ```
 
 
@@ -68,7 +69,7 @@ Which group means are we comparing in a model with 2 factors?
 
 For simplicity, we first consider only two levels of `dev_stage`: E16 and P28
 
-```{r,echo=FALSE, include=FALSE}
+```{r,echo=FALSE, include=FALSE, warning=FALSE}
 ##########################################################
 ## simplifying dev_stage to first and last timepoints
 ##########################################################
@@ -82,7 +83,7 @@ oneGene <- toLongerMeta(eset) %>%
 ```
 
 
-```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center'}
+```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center', warning=FALSE}
 set.seed(3849)
 mu.hat <- oneGene %>% 
   group_by(`genotype:dev_stage`) %>% 
@@ -151,7 +152,7 @@ For any sample $i$ in the reference group: $j=WT$ and $k=E16$, then $x_{KO}=0$ a
 as before $\theta$ is the mean of the reference group 
 
 
-```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center'}
+```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center', warning=FALSE}
 p1 +
   geom_text(aes(x = "E16", y = mu.hat[1,2], 
                 label = TeX("$\\widehat{\\theta}=\\widehat{\\mu}_1$", 
@@ -203,7 +204,7 @@ Substracting these expectations we get $\tau_{KO}$, the *conditional* genotype e
   
 $$\tau_{KO}=E[Y_{NrlKO,E16}]-E[Y_{WT,E16}]$$ 
 
-```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center'}
+```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center', warning=FALSE}
 p1 +
   geom_text(aes(x = "E16", y = abs(mu.hat[1,2]+mu.hat[2,2])/2, 
                 label = TeX("$\\widehat{\\tau}_{KO}$", output = "character")),
@@ -246,7 +247,7 @@ Substracting these expectations we get $\tau_{P28}$, the *conditional* developme
 $$\tau_{P28}=E[Y_{WT,P28}]-E[Y_{WT,E16}]$$
 
 
-```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center'}
+```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center', warning=FALSE}
 p1 +
 #parameter and segments
   geom_text(aes(x = 2.3, y = abs(mu.hat[1,2]+mu.hat[3,2])/2, 
@@ -283,7 +284,7 @@ means.2Fact %>%
 
 Can we simply add up the simple effect of genotype NrlKO, and the simple effect of developmental stage P28, to get the effect at P28 in NrlKO?? If so, we'd expect the P28:NrlKO group to have a mean predicted by the dotted grey line (i.e.**that the effect of KO is the same at E16 as it is at P28**:
 
-```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center'}
+```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center', warning=FALSE}
 mu.add <- mu.hat[3,2] - (mu.hat[1,2] - mu.hat[2,2])
 
 p1.itx  <- p1 +
@@ -318,7 +319,7 @@ $$\tau_{KO:P28}= (E[Y_{NrlKO,P28}]-E[Y_{WT,P28}]) - (E[Y_{NrlKO,E16}]-E[Y_{WT,E1
 
 This term is represented by the blue arrow:
 
-```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center'}
+```{r,echo=FALSE, fig.height= 2.5, fig.width = 5, fig.align='center', warning=FALSE}
 p1.itx +
   #circles at means    
     geom_point(aes(x = 2, y = mu.hat[4,2]), size = 3, shape = 1, colour = 'blue') +

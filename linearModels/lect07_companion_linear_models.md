@@ -2,41 +2,26 @@ STAT 540: Companion to Lecture 7: Linear Models
 ================
 Keegan Korthauer
 
-- <a href="#two-way-anova-or-a-linear-model-with-interaction"
-  id="toc-two-way-anova-or-a-linear-model-with-interaction">Two-way ANOVA
-  or a linear model with interaction</a>
-  - <a href="#reference-treatment-effect-parametrization"
-    id="toc-reference-treatment-effect-parametrization">Reference-treatment
-    effect parametrization</a>
-  - <a href="#mathematically-a-bit-more-difficult"
-    id="toc-mathematically-a-bit-more-difficult">Mathematically (a bit more
-    difficult…)</a>
-  - <a href="#reference-wt--e16" id="toc-reference-wt--e16">Reference: WT
-    &amp; E16</a>
-  - <a href="#simple-genotype-effect-wt-vs-nrlko--at-e16-"
-    id="toc-simple-genotype-effect-wt-vs-nrlko--at-e16-"><em>Simple</em>
-    genotype effect: WT <em>vs</em> NrlKO <font color="blue"> at E16
-    </font></a>
-  - <a href="#simple-developmental-effect-e16-vs-p28--in-wt-"
-    id="toc-simple-developmental-effect-e16-vs-p28--in-wt-"><em>Simple</em>
-    developmental effect: E16 <em>vs</em> P28 <font color="blue"> in WT
-    </font></a>
-  - <a href="#interaction-effect" id="toc-interaction-effect">Interaction
-    effect</a>
-- <a href="#two-way-anova-without-interaction-additive-models"
-  id="toc-two-way-anova-without-interaction-additive-models">Two-way ANOVA
-  without interaction: additive models</a>
-  - <a href="#mathematically" id="toc-mathematically">Mathematically</a>
-- <a href="#some-additional-examples"
-  id="toc-some-additional-examples">Some additional examples</a>
-  - <a href="#example-4-development-in-wt-is-statistically-significant"
-    id="toc-example-4-development-in-wt-is-statistically-significant">Example
-    4: development in WT is statistically significant</a>
-  - <a
-    href="#example-5-both-simple-development-and-genotype-are-statistically-significant"
-    id="toc-example-5-both-simple-development-and-genotype-are-statistically-significant">Example
-    5: both simple development and genotype are statistically
-    significant</a>
+- [Two-way ANOVA or a linear model with
+  interaction](#two-way-anova-or-a-linear-model-with-interaction)
+  - [Reference-treatment effect
+    parametrization](#reference-treatment-effect-parametrization)
+  - [Mathematically (a bit more
+    difficult…)](#mathematically-a-bit-more-difficult)
+  - [Reference: WT & E16](#reference-wt--e16)
+  - [*Simple* genotype effect: WT *vs* NrlKO <font color="blue"> at E16
+    </font>](#simple-genotype-effect-wt-vs-nrlko--at-e16-)
+  - [*Simple* developmental effect: E16 *vs* P28 <font color="blue"> in
+    WT </font>](#simple-developmental-effect-e16-vs-p28--in-wt-)
+  - [Interaction effect](#interaction-effect)
+- [Two-way ANOVA without interaction: additive
+  models](#two-way-anova-without-interaction-additive-models)
+  - [Mathematically](#mathematically)
+- [Some additional examples](#some-additional-examples)
+  - [Example 4: development in WT is statistically
+    significant](#example-4-development-in-wt-is-statistically-significant)
+  - [Example 5: both simple development and genotype are statistically
+    significant](#example-5-both-simple-development-and-genotype-are-statistically-significant)
 
 Note that the source Rmd for this document can be found
 [here](https://github.com/STAT540-UBC/resources/blob/main/linearModels/lect07_companion_linear_models.Rmd)
@@ -268,9 +253,6 @@ Using the expectations from above, you can show that:
 $$\tau_{KO:P28}= (E[Y_{NrlKO,P28}]-E[Y_{WT,P28}]) - (E[Y_{NrlKO,E16}]-E[Y_{WT,E16}]) $$
 
 This term is represented by the blue arrow:
-
-    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-    ## ℹ Please use `linewidth` instead.
 
 <img src="lect07_companion_linear_models_files/figure-gfm/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
 
