@@ -140,8 +140,8 @@ In some samples, this gene has over 1e6 reads - it's an outlier even relative to
 Let's calculate the proportion of all reads mapping to this one gene.
 
 ```{r}
-frcrn45s <- counts[soaker,]/ colSums(counts)
-quantile(frcrn45s)
+frcrn45s <- (counts[soaker,]/colSums(counts)) %>% as.vector() %>% unlist()
+quantile(frcrn45s) 
 ```
 
 This one gene is up to `r signif(max(frcrn45s*100),2)`% of the reads! This is not unusual.

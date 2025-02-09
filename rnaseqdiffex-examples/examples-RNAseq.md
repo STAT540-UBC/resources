@@ -2,50 +2,32 @@ RNA-seq examples
 ================
 Paul Pavlidis and Keegan Korthauer
 
-- <a href="#introduction" id="toc-introduction">Introduction</a>
-- <a href="#setup" id="toc-setup">Setup</a>
-- <a href="#preparing-for-analysis"
-  id="toc-preparing-for-analysis">Preparing for analysis</a>
-  - <a href="#loading-and-preparing-data"
-    id="toc-loading-and-preparing-data">Loading and preparing data</a>
-    - <a href="#sequencing-space" id="toc-sequencing-space">Sequencing
-      space</a>
-  - <a href="#counts-to-cpm" id="toc-counts-to-cpm">Counts to CPM</a>
-  - <a href="#setting-up-our-design-matrix"
-    id="toc-setting-up-our-design-matrix">Setting up our design matrix</a>
-- <a href="#differential-expression-analysis"
-  id="toc-differential-expression-analysis">Differential expression
-  analysis</a>
-  - <a href="#using-standard-linear-model"
-    id="toc-using-standard-linear-model">Using standard linear model</a>
-  - <a href="#using-limma-on-log2cpm" id="toc-using-limma-on-log2cpm">Using
-    limma on log2cpm</a>
-    - <a href="#bonus-topic-p-value-distribution"
-      id="toc-bonus-topic-p-value-distribution">Bonus topic: P-value
-      distribution</a>
-  - <a href="#using-limma-trend" id="toc-using-limma-trend">Using
-    limma-trend</a>
-  - <a href="#using-limma-voom" id="toc-using-limma-voom">Using
-    limma-voom</a>
-  - <a href="#using-limma-voom-with-tmm"
-    id="toc-using-limma-voom-with-tmm">Using limma-voom with TMM</a>
-  - <a href="#using-edger-lrt" id="toc-using-edger-lrt">Using edgeR LRT</a>
-    - <a href="#likelihood-ratio-test-lrt"
-      id="toc-likelihood-ratio-test-lrt">Likelihood ratio test (LRT)</a>
-  - <a href="#using-edger-quasi-likelihood"
-    id="toc-using-edger-quasi-likelihood">Using edgeR Quasi-likelihood</a>
-  - <a href="#using-deseq2" id="toc-using-deseq2">Using DESeq2</a>
-- <a href="#heatmaps-of-top-genes-limma-voom"
-  id="toc-heatmaps-of-top-genes-limma-voom">Heatmaps of top genes
-  (limma-voom)</a>
-  - <a href="#bonus-topic-heatmap-with-adjusted-data-limma-trend"
-    id="toc-bonus-topic-heatmap-with-adjusted-data-limma-trend">Bonus topic:
-    Heatmap with adjusted data (limma-trend)</a>
-- <a href="#comparing-methods" id="toc-comparing-methods">Comparing
-  methods</a>
-  - <a href="#differences-between-limma-trend-and-limma-voom"
-    id="toc-differences-between-limma-trend-and-limma-voom">Differences
-    between limma-trend and limma-voom</a>
+- [Introduction](#introduction)
+- [Setup](#setup)
+- [Preparing for analysis](#preparing-for-analysis)
+  - [Loading and preparing data](#loading-and-preparing-data)
+    - [Sequencing space](#sequencing-space)
+  - [Counts to CPM](#counts-to-cpm)
+  - [Setting up our design matrix](#setting-up-our-design-matrix)
+- [Differential expression analysis](#differential-expression-analysis)
+  - [Using standard linear model](#using-standard-linear-model)
+  - [Using limma on log2cpm](#using-limma-on-log2cpm)
+    - [Bonus topic: P-value
+      distribution](#bonus-topic-p-value-distribution)
+  - [Using limma-trend](#using-limma-trend)
+  - [Using limma-voom](#using-limma-voom)
+  - [Using limma-voom with TMM](#using-limma-voom-with-tmm)
+  - [Using edgeR LRT](#using-edger-lrt)
+    - [Likelihood ratio test (LRT)](#likelihood-ratio-test-lrt)
+  - [Using edgeR Quasi-likelihood](#using-edger-quasi-likelihood)
+  - [Using DESeq2](#using-deseq2)
+- [Heatmaps of top genes
+  (limma-voom)](#heatmaps-of-top-genes-limma-voom)
+  - [Bonus topic: Heatmap with adjusted data
+    (limma-trend)](#bonus-topic-heatmap-with-adjusted-data-limma-trend)
+- [Comparing methods](#comparing-methods)
+  - [Differences between limma-trend and
+    limma-voom](#differences-between-limma-trend-and-limma-voom)
 
 # Introduction
 
@@ -232,14 +214,12 @@ relative to the sample.
 Let’s calculate the proportion of all reads mapping to this one gene.
 
 ``` r
-frcrn45s <- counts[soaker,]/ colSums(counts)
-quantile(frcrn45s)
+frcrn45s <- (counts[soaker,]/colSums(counts)) %>% as.vector() %>% unlist()
+quantile(frcrn45s) 
 ```
 
-    ## Warning in xtfrm.data.frame(x): cannot xtfrm data frames
-
-    ##                 0%         25%         50%         75%       100%
-    ## Rn45s 0.0003286862 0.001003311 0.001826259 0.003166741 0.08605762
+    ##           0%          25%          50%          75%         100% 
+    ## 0.0003286862 0.0010033112 0.0018262590 0.0031667411 0.0860576176
 
 This one gene is up to 8.6% of the reads! This is not unusual.
 
@@ -261,7 +241,7 @@ ggplot(cpgcum, aes(x = index, y = CumulativeFracCounts, group = Sample)) +
 
 ![](examples-RNAseq_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-From this we see that for most samples, the top \~5% of genes (vertical
+From this we see that for most samples, the top ~5% of genes (vertical
 dashed line) make up approximately 50% of the counts (horizontal dashed
 line)!
 
@@ -1041,7 +1021,7 @@ dge <- estimateDisp(dge, design = modm, robust = TRUE)
 range(dge$prior.df)
 ```
 
-    ## [1] 1.456025 4.617746
+    ## [1] 4.622035 4.622035
 
 ``` r
 # plot mean var trend
@@ -1062,59 +1042,59 @@ topTags(glmLRT(lfit, coef = "SexF"))$table
 ```
 
     ##                     logFC   logCPM         LR        PValue           FDR
-    ## Kdm5d         -10.7195373 3.996977 6216.83218  0.000000e+00  0.000000e+00
-    ## Eif2s3y       -10.5508575 4.090526 1655.35313  0.000000e+00  0.000000e+00
-    ## Ddx3y         -10.4683213 4.584310 4335.45584  0.000000e+00  0.000000e+00
-    ## Uty            -9.6350564 3.159288 4343.85802  0.000000e+00  0.000000e+00
-    ## Xist            9.8523916 8.311049 1387.84343 9.206303e-304 2.238605e-300
-    ## Kdm6a           0.5338620 5.698533   99.33969  2.127021e-23  4.310053e-20
-    ## Eif2s3x         0.6635603 4.679478   63.93119  1.288419e-15  2.237800e-12
-    ## 5530601H04Rik   0.5136595 3.724893   40.72263  1.754440e-10  2.666310e-07
-    ## Kdm5c           0.3082027 7.410249   27.69496  1.420322e-07  1.918697e-04
-    ## Pbdc1           0.3683036 4.895747   24.94333  5.904029e-07  7.178119e-04
+    ## Kdm5d         -10.7195348 3.996979 6214.22209  0.000000e+00  0.000000e+00
+    ## Eif2s3y       -10.5508531 4.090534 1655.60141  0.000000e+00  0.000000e+00
+    ## Ddx3y         -10.4683171 4.584314 4336.26430  0.000000e+00  0.000000e+00
+    ## Uty            -9.6350625 3.159290 4341.96981  0.000000e+00  0.000000e+00
+    ## Xist            9.8523880 8.311049 1388.01620 8.443895e-304 2.053218e-300
+    ## Kdm6a           0.5338637 5.698531   99.41109  2.051707e-23  4.157442e-20
+    ## Eif2s3x         0.6635607 4.679470   63.91572  1.298570e-15  2.255431e-12
+    ## 5530601H04Rik   0.5136602 3.724892   40.71314  1.762974e-10  2.679279e-07
+    ## Kdm5c           0.3082027 7.410249   27.69323  1.421596e-07  1.920419e-04
+    ## Pbdc1           0.3683037 4.895743   24.93654  5.924865e-07  7.203450e-04
 
 ``` r
 topTags(glmLRT(lfit, coef = "GroupMu"))$table 
 ```
 
     ##              logFC   logCPM        LR       PValue          FDR
-    ## Chd8    -0.5906606 7.168659 122.72149 1.604640e-28 1.950921e-24
-    ## Dnajc4   0.3386763 3.479594  40.50272 1.963426e-10 1.193567e-06
-    ## Vrk3     0.2232005 5.019842  33.24769 8.113626e-09 2.471321e-05
-    ## Anxa11   0.5191569 2.959509  33.24360 8.130682e-09 2.471321e-05
-    ## Hmgcll1 -0.2749039 4.677392  29.43187 5.791743e-08 1.408320e-04
-    ## Xrcc4    0.3221447 3.798639  28.12414 1.137780e-07 2.305522e-04
-    ## Lrrc48   0.4072922 3.067613  27.64926 1.454279e-07 2.525874e-04
-    ## Mtrr     0.2372077 3.938010  25.95035 3.503114e-07 4.639117e-04
-    ## Parva    0.2483251 6.155075  25.86456 3.662322e-07 4.639117e-04
-    ## Usp11   -0.2683721 7.332362  25.74941 3.887462e-07 4.639117e-04
+    ## Chd8    -0.5906607 7.168658 122.71500 1.609893e-28 1.957308e-24
+    ## Dnajc4   0.3386802 3.479596  40.52725 1.938934e-10 1.178678e-06
+    ## Anxa11   0.5191422 2.959509  33.23148 8.181526e-09 2.644640e-05
+    ## Vrk3     0.2232217 5.019842  33.11180 8.700903e-09 2.644640e-05
+    ## Hmgcll1 -0.2749061 4.677393  29.45878 5.711882e-08 1.388901e-04
+    ## Xrcc4    0.3221448 3.798640  28.12613 1.136611e-07 2.303153e-04
+    ## Lrrc48   0.4072923 3.067619  27.64146 1.460154e-07 2.536078e-04
+    ## Mtrr     0.2372039 3.938008  25.93212 3.536350e-07 4.638471e-04
+    ## Parva    0.2483252 6.155073  25.87011 3.651802e-07 4.638471e-04
+    ## Usp11   -0.2683720 7.332362  25.74787 3.890567e-07 4.638471e-04
 
 ``` r
 topTags(glmLRT(lfit, coef = c("DPC14.5", "DPC17.5", "DPC21", "DPC77")))$table
 ```
 
     ##        logFC.DPC14.5 logFC.DPC17.5 logFC.DPC21 logFC.DPC77   logCPM        LR
-    ## Rps29      -9.637965     -9.406262   -9.144634  -10.267744 5.596325  8805.983
-    ## Rpl5       -9.081222     -9.665479   -9.369362   -9.381689 6.094013  3141.591
-    ## Rpl28      -8.936640     -8.683710   -7.899989   -9.382923 5.876428 14388.277
-    ## Gapdh      -8.766668     -9.000826   -8.334994   -8.193280 7.253398  9451.582
-    ## Rps13      -8.674700     -9.796170   -9.804056   -9.323131 5.464826  9948.090
-    ## Rps23      -8.625074    -10.714210  -10.628530   -9.742579 5.547729 12120.883
-    ## Rps17      -8.402943     -8.581919   -8.856246   -9.183866 5.810372  7887.321
-    ## Rpl19      -8.264809     -8.996156   -9.267205   -8.414900 6.182804 11337.436
-    ## Rpl24      -7.980029     -7.917214   -7.979188   -8.784711 4.867295  2964.703
-    ## Rpl23a     -7.843216     -7.924164   -7.788970   -6.543794 5.056430  2631.553
+    ## Rps29      -9.637957     -9.406283   -9.144634  -10.267729 5.596315  3342.825
+    ## Rpl5       -9.081223     -9.665489   -9.369362   -9.381682 6.094006  3142.528
+    ## Rpl28      -8.936640     -8.683703   -7.899988   -9.382924 5.876420 14398.729
+    ## Gapdh      -8.766668     -9.000826   -8.334994   -8.193280 7.253395  9451.917
+    ## Rps17      -8.402943     -8.581916   -8.856245   -9.183869 5.810363  9997.659
+    ## Rpl36a     -7.521469     -8.286177   -8.793011   -7.726034 4.563014  9219.108
+    ## Rps16      -7.381172     -8.172541   -7.951550   -8.516319 4.836449 10000.545
+    ## Sumo2      -7.340450     -7.933896   -7.634578   -8.087391 3.094205  2805.711
+    ## Atp5g2     -7.266739     -6.540621   -6.557382   -7.082749 3.091140  1789.299
+    ## Rpl9       -7.216448     -8.344133   -8.644584   -8.810905 6.194431  3309.047
     ##        PValue FDR
     ## Rps29       0   0
     ## Rpl5        0   0
     ## Rpl28       0   0
     ## Gapdh       0   0
-    ## Rps13       0   0
-    ## Rps23       0   0
     ## Rps17       0   0
-    ## Rpl19       0   0
-    ## Rpl24       0   0
-    ## Rpl23a      0   0
+    ## Rpl36a      0   0
+    ## Rps16       0   0
+    ## Sumo2       0   0
+    ## Atp5g2      0   0
+    ## Rpl9        0   0
 
 ``` r
 # add edgeRlrt results to master results table
@@ -1166,59 +1146,59 @@ topTags(glmQLFTest(qfit, coef = "SexF"))$table
 ```
 
     ##                     logFC   logCPM          F       PValue          FDR
-    ## Kdm5d         -10.7174041 3.996977 4784.31800 1.578049e-44 1.918592e-40
-    ## Ddx3y         -10.4642939 4.584310 3625.08292 4.751475e-42 2.888421e-38
-    ## Uty            -9.6449085 3.159288 2744.64012 1.427756e-39 5.786218e-36
-    ## Eif2s3y       -10.5280880 4.090526 1956.06459 1.436413e-36 4.365976e-33
-    ## Xist            9.8363495 8.311049 1767.71446 1.124838e-35 2.735156e-32
-    ## Kdm6a           0.5327577 5.698533  107.11350 4.536479e-13 9.192419e-10
-    ## Eif2s3x         0.6636832 4.679478   65.60040 4.403407e-10 7.648089e-07
-    ## 5530601H04Rik   0.5147258 3.724893   42.93019 6.694390e-08 1.017380e-04
-    ## Kdm5c           0.3082256 7.410249   29.76853 2.469134e-06 3.335525e-03
-    ## Pbdc1           0.3683890 4.895747   26.19144 7.443244e-06 9.049497e-03
+    ## Ddx3y         -10.4621823 4.584314 4729.44890 3.970218e-72 4.826991e-68
+    ## Kdm5d         -10.7207059 3.996979 5746.60861 1.648494e-69 1.002120e-65
+    ## Eif2s3y       -10.5214721 4.090534 2751.68610 5.629657e-64 2.281512e-60
+    ## Uty            -9.6322631 3.159290 3758.91769 8.797162e-61 2.673897e-57
+    ## Xist            9.8479839 8.311049 1932.00228 2.186177e-36 5.315907e-33
+    ## Kdm6a           0.5332520 5.698531  106.69100 4.542818e-13 9.205263e-10
+    ## Eif2s3x         0.6626779 4.679470   66.82027 3.345947e-10 5.811432e-07
+    ## 5530601H04Rik   0.5122160 3.724892   43.15210 6.195591e-08 9.415749e-05
+    ## Kdm5c           0.3082089 7.410249   30.00362 2.269886e-06 3.066363e-03
+    ## Pbdc1           0.3681061 4.895743   26.19363 7.354180e-06 8.941212e-03
 
 ``` r
 topTags(glmQLFTest(qfit, coef = "GroupMu"))$table
 ```
 
-    ##              logFC   logCPM         F       PValue          FDR
-    ## Chd8    -0.5907893 7.168659 131.37222 1.915567e-14 2.328946e-10
-    ## Dnajc4   0.3338042 3.479594  43.87859 5.282809e-08 3.211419e-04
-    ## Vrk3     0.2266556 5.019842  38.93996 1.870674e-07 7.581219e-04
-    ## Hmgcll1 -0.2735182 4.677392  32.32170 1.164003e-06 3.537988e-03
-    ## Anxa11   0.4985994 2.959509  31.10828 1.658245e-06 3.830713e-03
-    ## Xrcc4    0.3212566 3.798639  30.66428 1.890465e-06 3.830713e-03
-    ## Lrrc48   0.4076515 3.067613  27.99588 4.233658e-06 5.778018e-03
-    ## Usp11   -0.2682525 7.332362  27.68852 4.655516e-06 5.778018e-03
-    ## Myef2   -0.2609406 6.466225  27.65248 4.707810e-06 5.778018e-03
-    ## Parva    0.2480610 6.155075  27.50144 4.933711e-06 5.778018e-03
+    ##               logFC   logCPM         F       PValue          FDR
+    ## Chd8    -0.59068936 7.168658 132.19133 1.617292e-14 1.966304e-10
+    ## Dnajc4   0.33679891 3.479596  45.24118 3.691105e-08 2.243823e-04
+    ## Anxa11   0.53458846 2.959509  38.61097 2.007967e-07 6.108780e-04
+    ## Vrk3     0.22591568 5.019842  37.81824 2.474882e-07 6.108780e-04
+    ## Plin4    1.94081418 1.355310  33.98908 2.512247e-07 6.108780e-04
+    ## Hmgcll1 -0.27431222 4.677393  32.31437 1.148964e-06 2.328183e-03
+    ## Xrcc4    0.32212894 3.798640  30.95145 1.712188e-06 2.973826e-03
+    ## Gh      -0.09017553 4.326147  32.31386 2.562609e-06 3.894526e-03
+    ## Lrrc48   0.40719224 3.067619  29.06634 3.012760e-06 4.069905e-03
+    ## Usp11   -0.26833987 7.332362  27.89810 4.309512e-06 4.590439e-03
 
 ``` r
 topTags(glmQLFTest(qfit, coef = c("DPC14.5", "DPC17.5", "DPC21", "DPC77")))$table 
 ```
 
-    ##       logFC.DPC14.5 logFC.DPC17.5 logFC.DPC21 logFC.DPC77   logCPM        F
-    ## Rpl28     -8.936340     -8.686645   -7.900251   -9.382342 5.876428 3001.044
-    ## Rpsa      -6.876661     -7.631417   -7.791064   -8.278304 7.510997 2547.620
-    ## Gapdh     -8.766341     -8.999792   -8.334946   -8.192467 7.253398 2402.727
-    ## Rpl19     -8.265044     -8.997104   -9.267438   -8.413620 6.182804 2347.862
-    ## Rps7      -6.269546     -6.543893   -6.872611   -7.567293 6.035293 2256.255
-    ## Rps13     -8.675073     -9.796394   -9.804063   -9.324877 5.464826 2158.557
-    ## Rpl11     -7.097496     -8.440054   -8.112254   -8.055585 6.177988 2053.325
-    ## Rps23     -8.621146    -10.709068  -10.630968   -9.728684 5.547729 2042.292
-    ## Rps17     -8.403311     -8.585531   -8.857564   -9.180149 5.810372 1921.873
-    ## Rps29     -9.640166     -9.400490   -9.144444  -10.272330 5.596325 1851.579
-    ##             PValue          FDR
-    ## Rpl28 1.553417e-50 1.888644e-46
-    ## Rpsa  4.603543e-49 2.798494e-45
-    ## Gapdh 1.545224e-48 6.262277e-45
-    ## Rpl19 2.491223e-48 7.572071e-45
-    ## Rps7  5.672039e-48 1.379213e-44
-    ## Rps13 1.416097e-47 2.869485e-44
-    ## Rpl11 3.977689e-47 6.756840e-44
-    ## Rps23 4.446021e-47 6.756840e-44
-    ## Rps17 1.560237e-46 2.107707e-43
-    ## Rps29 3.368154e-46 4.095002e-43
+    ##        logFC.DPC14.5 logFC.DPC17.5 logFC.DPC21 logFC.DPC77   logCPM         F
+    ## Mobp       -2.848679     -5.028329   -3.371288    8.130062 5.058051 1015.3684
+    ## Etnppl      1.918931      2.145250    2.712779   11.385929 1.652200  556.5257
+    ## Zfp831      0.198732      2.720618    3.647180   10.457446 2.395262  760.2063
+    ## Pvalb       1.328450      2.860954    5.495276   12.227226 3.363124  661.5289
+    ## Hsd3b6     -5.003906     -7.370374   -8.569591  -10.144533 1.792343  705.6029
+    ## Hbb-y      -3.217215    -12.141920  -15.413942  -13.788011 8.110929  709.8675
+    ## Rps13      -8.667196     -9.791593   -9.804326   -9.289833 5.464815 2765.3753
+    ## Rps7       -6.270054     -6.539318   -6.872313   -7.566394 6.035286 2449.7945
+    ## Rps16      -7.381398     -8.172531   -7.951062   -8.516111 4.836449 2267.5996
+    ## Rpl36a     -7.522954     -8.287318   -8.791680   -7.735273 4.563014 2031.2538
+    ##              PValue          FDR
+    ## Mobp   1.307517e-60 1.589679e-56
+    ## Etnppl 4.453272e-54 2.707144e-50
+    ## Zfp831 2.418639e-53 9.801938e-50
+    ## Pvalb  9.679921e-52 2.942212e-48
+    ## Hsd3b6 5.301534e-51 1.289121e-47
+    ## Hbb-y  9.861409e-50 1.998250e-46
+    ## Rps13  1.358313e-49 2.359195e-46
+    ## Rps7   6.779225e-49 1.030273e-45
+    ## Rps16  1.026815e-47 1.387113e-44
+    ## Rpl36a 8.864104e-47 1.077698e-43
 
 ``` r
 # add edgeRquasi results to master results table
@@ -1379,15 +1359,15 @@ difmethods[apply(difmethods, 1, function(x) any(is.na(x))),]
 ```
 
     ##         lmlogcpm limmalogcpm limmatrend limmavoom limmavoomTMM  edgeRlrt
-    ## Gh     0.9666708   0.9647778  0.9644649 0.4935548    0.5028742 0.2296831
-    ## Inadl  0.1857345   0.1669024  0.1654348 0.1500759    0.1731358 0.1089681
-    ## Prkcd  0.5978009   0.5798900  0.5764137 0.6066300    0.6558730 0.3448177
-    ## Slc6a2 0.9912103   0.9907345  0.9907499 0.6532377    0.6663123 0.5736908
-    ##        edgeRquasi deseq2
-    ## Gh      0.9205048     NA
-    ## Inadl   0.1157896     NA
-    ## Prkcd   0.3491245     NA
-    ## Slc6a2  0.9459939     NA
+    ## Gh     0.9666708   0.9647778  0.9644649 0.4935548    0.5028742 0.2024133
+    ## Inadl  0.1857345   0.1669024  0.1654348 0.1500759    0.1731358 0.1089603
+    ## Prkcd  0.5978009   0.5798900  0.5764137 0.6066300    0.6558730 0.3447984
+    ## Slc6a2 0.9912103   0.9907345  0.9907499 0.6532377    0.6663123 0.5736558
+    ##          edgeRquasi deseq2
+    ## Gh     2.562609e-06     NA
+    ## Inadl  1.138722e-01     NA
+    ## Prkcd  3.445270e-01     NA
+    ## Slc6a2 9.443994e-01     NA
 
 Also note that by default `DESeq2` applies Independent Filtering when
 computing adjusted p-values. This is different than ‘standard’ FDR
@@ -1519,9 +1499,9 @@ difqval["Chd8",]
 ```
 
     ##     lmlogcpm  limmalogcpm   limmatrend    limmavoom limmavoomTMM     edgeRlrt 
-    ## 3.393778e-09 9.788399e-10 4.241634e-10 4.145929e-10 1.816495e-10 1.317549e-24 
+    ## 3.393778e-09 9.788399e-10 4.241634e-10 4.145929e-10 1.816495e-10 1.321457e-24 
     ##   edgeRquasi       deseq2 
-    ## 1.572575e-10 2.484827e-25
+    ## 1.319395e-10 2.484827e-25
 
 Yes! Though the p-values for DESeq2 and edgeR-LRT are much smaller than
 the rest.
@@ -1537,7 +1517,8 @@ difmethods %>%
   facet_wrap(~ Method)
 ```
 
-    ## Warning: Removed 4 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 4 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](examples-RNAseq_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
 
@@ -1585,7 +1566,7 @@ unlist(lapply(topGenes, length))
     ##     lmlogcpm  limmalogcpm   limmatrend    limmavoom limmavoomTMM     edgeRlrt 
     ##          420          385          387          626          583          552 
     ##   edgeRquasi       deseq2 
-    ##          403          717
+    ##          450          717
 
 ``` r
 # Upset plot
@@ -1642,14 +1623,14 @@ disg <- row.names(difmethods)[which( difranks[,"limmavoom"] < 10 &
 difmethods[disg,]
 ```
 
-    ##          lmlogcpm limmalogcpm limmatrend    limmavoom limmavoomTMM    edgeRlrt
-    ## Etnppl 0.03392980  0.03255416 0.06004649 8.773553e-07 6.359142e-07 0.009509664
-    ## Plin4  0.04550473  0.03545877 0.03687705 2.443131e-09 1.935009e-09 0.099879185
-    ## Xdh    0.02960385  0.02621567 0.04298137 6.314318e-07 6.585187e-07 0.012479232
-    ##         edgeRquasi     deseq2
-    ## Etnppl 0.046673481 0.12000347
-    ## Plin4  0.009594486 0.09961678
-    ## Xdh    0.039117814 0.04866324
+    ##          lmlogcpm limmalogcpm limmatrend    limmavoom limmavoomTMM   edgeRlrt
+    ## Etnppl 0.03392980  0.03255416 0.06004649 8.773553e-07 6.359142e-07 0.00950952
+    ## Plin4  0.04550473  0.03545877 0.03687705 2.443131e-09 1.935009e-09 0.09992796
+    ## Xdh    0.02960385  0.02621567 0.04298137 6.314318e-07 6.585187e-07 0.01248232
+    ##          edgeRquasi     deseq2
+    ## Etnppl 2.241620e-04 0.12000347
+    ## Plin4  2.512247e-07 0.09961678
+    ## Xdh    6.177039e-05 0.04866324
 
 ``` r
 difranks[disg,]
@@ -1657,12 +1638,12 @@ difranks[disg,]
 
     ##        lmlogcpm limmalogcpm limmatrend limmavoom limmavoomTMM edgeRlrt
     ## Etnppl     1916        1856       2597         9            6      973
-    ## Plin4      2235        1945       2010         2            2     3391
-    ## Xdh        1757        1654       2172         7            7     1157
+    ## Plin4      2235        1945       2010         2            2     3393
+    ## Xdh        1757        1654       2172         7            7     1156
     ##        edgeRquasi deseq2
-    ## Etnppl       2259   3816
-    ## Plin4         914   3461
-    ## Xdh          2053   2390
+    ## Etnppl         88   3816
+    ## Plin4           5   3461
+    ## Xdh            43   2390
 
 What do these genes look like?
 
@@ -1687,8 +1668,8 @@ counts_long %>%
 
 *Conclusions:* Each of these three genes being among the top hits for
 limma-voom looks fishy. Except for adults, they are is barely expressed
-(0-4 raw counts vs \~500). Maybe we’d like to see this gene come up if
-we were looking for interaction effects.
+(0-4 raw counts vs ~500). Maybe we’d like to see this gene come up if we
+were looking for interaction effects.
 
 Why does this happen? For voom the weighting means that very low
 expression values are going to have little effect on the model fit.
