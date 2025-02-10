@@ -6,7 +6,7 @@ Paul Pavlidis and Keegan Korthauer
 - [Setup](#setup)
 - [Preparing for analysis](#preparing-for-analysis)
   - [Loading and preparing data](#loading-and-preparing-data)
-    - [Sequencing space](#sequencing-space)
+    - [RNA composition](#rna-composition)
   - [Counts to CPM](#counts-to-cpm)
   - [Setting up our design matrix](#setting-up-our-design-matrix)
 - [Differential expression analysis](#differential-expression-analysis)
@@ -163,10 +163,10 @@ dim(counts)
 
     ## [1] 20962    44
 
-### Sequencing space
+### RNA composition
 
-Here we examine the “soaker” genes (just looking at the most extreme
-case).
+Here we examine the genes that take up the most reads (just looking at
+the most extreme case).
 
 ``` r
 soaker <- which.max(rowMeans(counts))

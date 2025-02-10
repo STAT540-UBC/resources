@@ -105,9 +105,9 @@ counts <- counts %>% filter(rowSums(.) > 0)
 dim(counts)
 ```
 
-### Sequencing space
+### RNA composition
 
-Here we examine the "soaker" genes (just looking at the most extreme case).
+Here we examine the genes that take up the most reads (just looking at the most extreme case).
 
 ```{r genelength}
 soaker <- which.max(rowMeans(counts))
