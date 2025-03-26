@@ -1,17 +1,29 @@
 import random
 import math
 
-# input lists of teams and students
-teams = [f'team{i}' for i in range(1, 7)]
-students = [f'student{i}' for i in range(1, 30)]
+# input student/team assignments as dictionary and extract separate teams/students lists
+teams_students = {'team1': [f'student{i}' for i in range(1, 5)],
+                  'team2': [f'student{i}' for i in range(6, 10)],
+                  'team3': [f'student{i}' for i in range(11, 15)],
+                  'team4': [f'student{i}' for i in range(16, 20)],
+                  'team5': [f'student{i}' for i in range(21, 25)],
+                  'team6': [f'student{i}' for i in range(25, 30)]}
+
+teams = list(teams_students.keys())
+students = sum(teams_students.values(), [])
+
 teams_per_student = 2 # number of teams to be marked by each student
+max_students = math.ceil((len(students) - (len(students) / len(teams))) / len(teams) * teams_per_student) # define maximum students to be assigned per group
 
-max_students = math.ceil(len(students) / len(teams) * teams_per_student) # each student is assigned 2 groups. define maximum students per group
-
-assignment = {} # initialize empty assignments dictionary
+assignment = {}
 
 for i in range(len(students)):
-    assignment[students[i]] = random.sample(teams, teams_per_student) # assign random unique teams per student
+    mask = [key for key, val in teams_students.items() if students[i] in val]
+    
+    try:
+        assignment[students[i]] = random.sample([a for a in teams if a not in mask], teams_per_student) # assign random unique teams per student, masking own team from list
+    except ValueError as e:
+        raise Exception('Teams list minus mask resulted in too few groups. Rerun until it works!') from e
 
     teams_count = dict.fromkeys(teams, 0) # count number of students assigned per team
     for i in sum(assignment.values(), []):
@@ -20,7 +32,7 @@ for i in range(len(students)):
         else:
             teams_count[i] = 1
 
-    if len(teams) > 2: # loop to remove teams that have enough students assigned
+    if len(teams) > teams_per_student: # remove teams that have enough students assigned
         for i in teams[:]:
             if teams_count.get(i) >= max_students:
                 teams.remove(i)
